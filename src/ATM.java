@@ -7,6 +7,12 @@
 
 import java.util.Scanner;
 
+/**
+ * Class that will handle all logic and start the program
+ * Incorporates all the other classes ad combines them here
+ *
+ * @author Welsey Tran
+ */
 public class ATM {
 
     private String printMsg = "";
@@ -36,7 +42,7 @@ public class ATM {
             processChoice(choice, scan);
             displayMsg(); //display again for the receipt
             if (choice==6) {
-                System.out.println("Come again soon!");
+                System.out.println("\nCome again soon!");
                 break;
             }
             System.out.print("Would you like to do anything else? (y/n)\n> ");
@@ -71,33 +77,41 @@ public class ATM {
         printMsg += "Please choose the number that corresponds to the menu \n> ";
     }
 
+    /**
+     * Creates a receipt for the user depending on what happened due to their choice in the ATM
+     *
+     * @param choice The user's choice of action for the ATM
+     * @param transaction If the transaction failed or if it was completed successfully
+     * @param amount The amount of money that the user is using if any
+     * @param account The account that the user is mainly affected
+     */
     private void printReciept(int choice, boolean transaction, double amount, Account account) {
         String msg = "";
         String condition = "";
         if (!transaction) {condition = "failed to";}
 
         switch(choice) {
-            case 1:
+            case 1: //withdraw
                 if (!transaction) {msg += "Insufficient funds in that account!\n\n";}
                 else {msg += "Withdrew $" + amount + " from " + account + "\nTransaction ID: " + transactionID + "\n\n";}
                 break;
-            case 2:
+            case 2: //deposit
                 msg += condition + "Deposited $" + amount + " into " + account + "\nTransaction ID: " + transactionID + "\n\n";
                 break;
-            case 3:
+            case 3: // transfer
                 String acc2 = "checking";
                 if (account.getType()) {acc2 = "savings";}
                 if (!transaction) {msg += "Insufficient funds in " + account + " account to transfer\n\n";}
                 else {msg += "Transfer of $" + amount + " from " + account + " to " + acc2 + " account" +"\nTransaction ID: " + transactionID + "\n\n";}
                 break;
-            case 4:
+            case 4: //show balances
                 msg += "Your savings account has: $" + customer.getSavings().getBal() + "\n";
                 msg += "Your checking account has: $" + customer.getChecking().getBal() + "\n";
                 break;
-            case 5:
+            case 5: //change PIN
                 msg += "Changed PIN: complete\n";
                 break;
-            case 6:
+            case 6: //Exit
                 break;
         }
 
@@ -122,21 +136,21 @@ public class ATM {
         } else {
             double amount;
             switch(choice) {
-                case 1:
+                case 1: //withdraw
                     amount = howMuch(scan);
-                    if (fromAccount(scan)) { // decides which one to withdraw from and how much
-                        if (customer.getChecking().getBal() >= amount) {
-                            while (!(amount % 5 == 0)) {
-                                System.out.println("You can only withdraw in multiples of 5 or 20");
+                    if (fromAccount(scan)) { // decides which one to withdraw from and how much; if true then checking
+                        if (customer.getChecking().getBal() >= amount) { //makes sure the account has enough money
+                            while (!(amount % 5 == 0)) { //make sure the multiples are in 5 or 20
+                                System.out.println("You can only withdraw in multiples of 5's or 20's");
                                 amount = howMuch(scan);
                             }
-                            customer.getChecking().withdraw(amount);
+                            customer.getChecking().withdraw(amount); //after they picked a multiple of 5 or 20
                             withdrawBills(scan,amount, true);
                             printReciept(choice,true,amount, customer.getChecking());
                         }
                         else {printReciept(choice,false,amount, customer.getChecking());}
                     }
-                    else { //if savings
+                    else { //if savings...
                         if (customer.getSavings().getBal() >= amount) {
                             while (!(amount % 5 == 0)) {
                                 System.out.println("You can only withdraw in multiples of 5 or 20");
@@ -150,7 +164,7 @@ public class ATM {
                     }
                     transactionID++;
                     break;
-                case 2:
+                case 2: //deposit
                     amount = howMuch(scan);
                     if (fromAccount(scan)) {
                         customer.getChecking().deposit(amount);
@@ -162,7 +176,7 @@ public class ATM {
                     }
                     transactionID++;
                     break;
-                case 3:
+                case 3: //trasnfer
                     amount = howMuch(scan);
                     if (fromAccount(scan)) {
                         printReciept(choice, customer.getChecking().transfer(customer.getSavings(), amount), amount, customer.getChecking());
@@ -172,14 +186,14 @@ public class ATM {
                     }
                     transactionID++;
                     break;
-                case 4:
+                case 4: //show balance
                     printReciept(choice, true, 0,null); // values are printed onto the receipt
                     break;
-                case 5:
+                case 5: //change PIN
                     choosePIN(scan);
                     printReciept(choice, true, 0, null);
                     break;
-                case 6:
+                case 6: //Exit
                     break;
             }
         }
@@ -248,6 +262,14 @@ public class ATM {
         customer.setPIN(newPIN);
     }
 
+    /**
+     * Determines the amount of bills that the user will get
+     * Either in multiples of 5 or 20
+     *
+     * @param scan Scanner object that allows for user input
+     * @param amount amount of money that the user is going to withdraw
+     * @param again To recursively call the function if they pick an invalid amount of bills
+     */
     private void withdrawBills(Scanner scan, double amount, boolean again) {
         if (!again) {System.out.println("Choose a valid amount of bills");}
         int maxFives = (int) amount / 5;
