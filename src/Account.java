@@ -12,7 +12,9 @@ public class Account {
 
     public void deposit(double amount) {balance += amount;}
 
-    public void withdraw(double amount) {balance -= amount;}
+    public void withdraw(double amount) {
+        balance -= amount;
+    }
 
     public boolean transfer(Account receiver, double amount) {
         if (balance >= amount) {

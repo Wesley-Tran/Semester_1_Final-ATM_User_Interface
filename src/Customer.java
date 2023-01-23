@@ -7,12 +7,12 @@
 public class Customer {
 
     private final String name;
-    private int PIN;
+    private String PIN;
 
     Account savings;
     Account checking;
 
-    public Customer(String name, int PIN) {
+    public Customer(String name, String PIN) {
         this.name = name;
         this.PIN = PIN;
         savings = new Account(false);
@@ -27,6 +27,6 @@ public class Customer {
 
     public Account getChecking() {return checking;}
 
-    public void setPIN(int newPIN) {PIN = newPIN;}
-    public boolean confirmPIN(int input) {return PIN == input;}
+    public void setPIN(String newPIN) {PIN = newPIN;}
+    public boolean confirmPIN(String input) {return PIN.equals(input);}
 }
