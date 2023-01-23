@@ -11,7 +11,7 @@ public class ATM {
 
     private String printMsg = "";
     private Customer customer = null;
-    private int transactionID = 10001;
+    private static int transactionID = 10001;
     /**
      * Only public method and will start the program by prompting for their name and PIN
      */
